@@ -2,30 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour {
+public class Character : MonoBehaviour
+{
 
 
-	public int moveDirection; //4 - standing still 0-up clockwise
-	
+	public int moveDirection; //4 - standing still 0-up then clockwise
+
 	public float speed;
-	public int ID;
+	public int ID;//only for enemies, different ais should have different ids
 	public LayerMask wall;
-	public Spawn spawn;
-	// Use this for initialization
-	void Start () {
+	public Spawn spawn; // only for enemies
+						// Use this for initialization
+	void Start()
+	{
 		speed = speed * Time.fixedDeltaTime; // make nicer numbers for speed
 	}
-	
+
 	// Update is called once per frame
-	void FixedUpdate () {
+	void FixedUpdate()
+	{
 		if (moveDirection != 4)
 		{
 			Vector3 newPos = transform.position;
+
+			//Movement used for player and enemies, In the future  add requested direction and more
 			if (moveDirection == 0)
 			{
+				//raycast for collision checing
 				if (Physics2D.Raycast(transform.position, Vector2.up, 0.52f, wall.value).collider == null)
 				{
-					transform.rotation=Quaternion.Euler ( new Vector3(0, 0, 180));
+					transform.rotation = Quaternion.Euler(new Vector3(0, 0, 180)); //rotate in movemnt direction
 					newPos.y += speed;
 				}
 				else
@@ -73,19 +79,21 @@ public class Character : MonoBehaviour {
 					moveDirection = 4;
 				}
 			}
-			if (newPos.x < -1)
-				newPos.x = 16f; //instead of 16 should be width of level
-			else if (newPos.x > 16)
-				newPos.x = -1f;
-				transform.position = newPos;
+
+			//checking if out of bounds to loop back
+			if (newPos.x < -0.7)
+				newPos.x = 15.7f; //instead of 16 should be width of level
+			else if (newPos.x > 15.7)
+				newPos.x = -0.7f;
+			transform.position = newPos;
 		}
 
-		
+
 	}
-	public void Kill()
+	public void Kill() // kill is only used for enemies, since playercontrol already knows when its dead bcause it does the trigger check
 	{
 		spawn.alive[ID] = 0;
 		Destroy(gameObject);
 	}
-	
+
 }

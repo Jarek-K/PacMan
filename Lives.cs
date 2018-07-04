@@ -11,6 +11,8 @@ public class Lives : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		lives = PlayerPrefs.GetInt("Lives", 3);
+
 		livesTxt.text = "Lives: " + lives;
 	}
 
@@ -18,15 +20,19 @@ public class Lives : MonoBehaviour
 	public void Die()
 	{
 		lives--;
+		PlayerPrefs.SetInt("Lives", lives);
 		if (lives == -1)
 		{
+			PlayerPrefs.SetInt("Lives", 3);
+			PlayerPrefs.SetInt("Score", 0);
+			PlayerPrefs.SetInt("Level", 0);
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 			//reload level
 		}
 		else
 		{
 			livesTxt.text = "Lives: " + lives;
-			
+
 			//	Spawn and whatnot
 		}
 	}

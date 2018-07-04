@@ -14,10 +14,10 @@ public class PlayerControl : MonoBehaviour
 	private bool invulnerable = false;
 	private IEnumerator coroutine;
 	public PlayerSpawn spawn;
-	//I use requested direction to make game more fuent
+
 	void Start()
 	{
-		lives = GameObject.FindGameObjectWithTag("Score").GetComponent<Lives>();
+		lives = GameObject.FindGameObjectWithTag("Score").GetComponent<Lives>(); // I know that finding with tag is costly, but It's just to things per spawn
 		score = GameObject.FindGameObjectWithTag("Score").GetComponent<Score>();
 	}
 
@@ -25,7 +25,7 @@ public class PlayerControl : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-
+		// I collect requested direction, and when it is possible I turn the pig in that direction, so timing the turn is not necessary and game feels more fluid
 
 		if (Input.GetAxis("Vertical") > 0)
 		{
@@ -48,11 +48,11 @@ public class PlayerControl : MonoBehaviour
 			//character.moveDirection = 3;
 		}
 
-		if (requestedDirection != 4)
+		if (requestedDirection != 4) //if direction is requested
 		{
 			if (Mathf.Abs(transform.position.x - Mathf.Round(transform.position.x)) < turnMargin && Mathf.Abs(transform.position.y - Mathf.Round(transform.position.y)) < turnMargin)
 			{
-				if (requestedDirection == 0)
+				if (requestedDirection == 0) // I don't know why I never use switch statements
 				{
 					RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 1f, wall.value);
 					Debug.DrawRay(transform.position, Vector2.up, Color.red, 0.5f);
@@ -115,36 +115,36 @@ public class PlayerControl : MonoBehaviour
 			StartCoroutine(coroutine);
 			character.speed = character.speed * 1.5f;
 			Destroy(collision.gameObject);
-			score.Increment(100);
+			score.Increment(1);
 		}
 		else if (collision.transform.tag == "Point")
 		{
 			Destroy(collision.gameObject);
-			score.Increment(50);
+			score.Increment(0);
 		}
 		else if (collision.transform.tag == "Enemy")// enemy
 		{
 			if (invulnerable)
 			{
-				score.Increment(250);
+				score.Increment(2);
 				collision.transform.GetComponent<Character>().Kill();
 			}
 			else
-			{
-				
+			{ // here is death sequence for player, I'm removing one life and spawning next player before destroying this one
+
 				lives.Die();
-				
-					spawn.Spawn();
-					Destroy(gameObject);
-				
+
+				spawn.Spawn();
+				Destroy(gameObject);
+
 			}
 		}
 	}
-	private IEnumerator Wait(int waitTime)
+	private IEnumerator Wait(int waitTime) // used for invulv
 	{
 
 		yield return new WaitForSeconds(waitTime);
-		
+
 		character.speed = character.speed / 1.5f;
 		gameObject.GetComponent<SpriteRenderer>().color = Color.white;
 		invulnerable = false;
