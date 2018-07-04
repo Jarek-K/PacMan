@@ -9,6 +9,7 @@ public class Character : MonoBehaviour {
 	public int strength; 
 	public float speed;
 	public bool pick;
+	public LayerMask wall;
 	// Use this for initialization
 	void Start () {
 		speed = speed * Time.fixedDeltaTime; // make nicer numbers for speed
@@ -20,30 +21,56 @@ public class Character : MonoBehaviour {
 		{
 			Vector3 newPos = transform.position;
 			if (moveDirection == 0)
-				newPos.y += speed;
+			{
+				if (Physics2D.Raycast(transform.position, Vector2.up, 0.52f, wall.value).collider == null)
+
+					newPos.y += speed;
+				else
+				{
+					transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), 0);
+					moveDirection = 4;
+				}
+			}
 			else if (moveDirection == 1)
-				newPos.x += speed;
+			{
+				if (Physics2D.Raycast(transform.position, Vector2.right, 0.52f, wall.value).collider == null)
+					newPos.x += speed;
+				else
+				{
+					transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), 0);
+					moveDirection = 4;
+				}
+			}
 			else if (moveDirection == 2)
-				newPos.y -= speed;
+			{
+				if (Physics2D.Raycast(transform.position, Vector2.down, 0.52f, wall.value).collider == null)
+					newPos.y -= speed;
+				else
+				{
+					transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), 0);
+					moveDirection = 4;
+				}
+			}
 			else
-				newPos.x -= speed;
+			{
+				if (Physics2D.Raycast(transform.position, Vector2.left, 0.52f, wall.value).collider == null)
+					newPos.x -= speed;
+				else
+				{
+					transform.position = new Vector3(Mathf.Round(transform.position.x), Mathf.Round(transform.position.y), 0);
+					moveDirection = 4;
+				}
+			}
+			if (newPos.x < -1)
+				newPos.x = 16f;
+			else if (newPos.x > 16)
+				newPos.x = -1f;
 				transform.position = newPos;
 		}
-	}
-	private void OnCollisionEnter2D(Collision2D collision)
-	{
-		if (collision.transform.tag == "Pickup" &&pick)
-		{
-			//collect pickup
-		}
-		else if (collision.transform.tag == "Wall")
-		{
-			moveDirection = 4; //stop
-			transform.position = new Vector3((int)transform.position.x, (int)transform.position.y, 0);//adjust position to center of square
 
-		}
-	
+		
 	}
+
 	public void Die()
 	{
 	}
